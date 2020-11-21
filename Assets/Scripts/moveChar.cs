@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class moveChar : MonoBehaviour
 {
-
+    public enum HangingDirection {Left, Right, None};
     public float moveSpeed = 10f;
     public float jumpSpeed = 10f;
     public bool isGrounded = false;
     public bool isHanging = false;
+    public bool isMovingRight = false;
+    public bool isMovingLeft = false;
     private float gravityScale;
     public bool stopHanging = false;
     public float hangingTimer = 0f;
     public float hangingTime = 0.2f;
+    public HangingDirection hangingDirection = HangingDirection.None;
 
     // Start is called before the first frame update
     void Start()
@@ -30,17 +33,37 @@ public class moveChar : MonoBehaviour
                 stopHanging = false;
                 isGrounded = false;
                 hangingTimer = 0f;
+                hangingDirection = HangingDirection.None;
             }
         }
 
-        if (Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0)
+        if ((Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0.05) )
         {
-            transform.Translate(Vector2.right *  Time.deltaTime * moveSpeed);
+            isMovingRight = true;
+            
+            if(hangingDirection != HangingDirection.Right) {
+
+		    	Quaternion temp = transform.rotation;
+	    		temp.y = 0f;
+		    	transform.rotation = temp;
+                transform.Translate(Vector2.right *  Time.deltaTime * moveSpeed);
+            }
+        }
+        else {
+            isMovingRight = false;
         }
 
-        if (Input.GetKeyDown("a") || Input.GetAxis("Horizontal") < 0)
+        if ((Input.GetKeyDown("a") || Input.GetAxis("Horizontal") < -0.05) )
         {
-            transform.Translate(Vector2.left *  Time.deltaTime * moveSpeed);
+            isMovingLeft = true;
+            if(hangingDirection != HangingDirection.Left) {
+                	Quaternion temp = transform.rotation;
+	    	    	temp.y = 180f;
+		        	transform.rotation = temp;
+                    transform.Translate(Vector2.right *  Time.deltaTime * moveSpeed);
+            }
+        } else {
+            isMovingLeft = false;
         }
 
         if ((Input.GetKeyDown("space") || Input.GetButtonDown("Jump")) && isGrounded ) 
@@ -51,7 +74,6 @@ public class moveChar : MonoBehaviour
             GetComponent<Rigidbody2D>().velocity = Vector3.zero;
             GetComponent<Rigidbody2D>().gravityScale = gravityScale;
         }
-
         
     }
 
@@ -60,18 +82,35 @@ public class moveChar : MonoBehaviour
 			isGrounded = true;
 		}
         if(isGrounded == false && coll.transform.tag == "Wall") {
-            Debug.Log("Hit wall and isgrounded is false");
-            isHanging = true;
-            GetComponent<Rigidbody2D>().gravityScale = 0;
-           GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            isGrounded = true;
+            
+            if((this.transform.position.x > coll.transform.position.x && transform.localEulerAngles.y == 180f) 
+            || (this.transform.position.x < coll.transform.position.x && transform.localEulerAngles.y == 0f) ) { 
+                if(this.transform.position.x > coll.transform.position.x) hangingDirection = HangingDirection.Left;
+                if(this.transform.position.x < coll.transform.position.x) hangingDirection = HangingDirection.Right;
+                GetComponent<Rigidbody2D>().gravityScale = gravityScale / 10;
+                GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                isGrounded = true;
+            }
         }
 	}
 
+    void OnTriggerEnter2D(Collider2D coll) {
+    if(isGrounded == false && coll.transform.tag == "Ledge") {
+            Debug.Log(transform.localEulerAngles.y);
+            if((this.transform.position.x > coll.transform.position.x && isMovingLeft) 
+            || (this.transform.position.x < coll.transform.position.x && isMovingRight) ) { 
+                 isHanging = true;
+                 if(this.transform.position.x > coll.transform.position.x) hangingDirection = HangingDirection.Left;
+                 if(this.transform.position.x < coll.transform.position.x) hangingDirection = HangingDirection.Right;
+                 GetComponent<Rigidbody2D>().gravityScale = 0;
+                 GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                isGrounded = true;
+            }
+        }
+    }
     void OnCollisionStay2D(Collision2D coll) {
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Wall") {
 			isGrounded = true;
-            
 		}
  
 	}
@@ -81,13 +120,19 @@ public class moveChar : MonoBehaviour
 			isGrounded = false;
 		}
         if(coll.transform.tag == "Wall") {
-            Debug.Log("leave wall");
             GetComponent<Rigidbody2D>().gravityScale = gravityScale;
-            
             stopHanging = true;
         }
 	}
 
-
+        void OnTriggerExit2D(Collider2D coll) {
+		if(coll.transform.tag == "Ground") {
+			isGrounded = false;
+		}
+        if(coll.transform.tag == "Ledge") {
+            GetComponent<Rigidbody2D>().gravityScale = gravityScale;
+            stopHanging = true;
+        }
+	}
 
 }
