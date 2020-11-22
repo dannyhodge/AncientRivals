@@ -29,31 +29,29 @@ public class moveChar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if ((Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0.05) )
+        if ((Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0.5) )
         {
-            transform.Translate(Vector2.right *  Time.deltaTime * currentMoveSpeed);
             isMovingRight = true;
-            
             if(hangingDirection != HangingDirection.Right) {
 
 		    	Quaternion temp = transform.rotation;
 	    		temp.y = 0f;
 		    	transform.rotation = temp;
-                transform.Translate(Vector2.right *  Time.deltaTime * moveSpeed);
+                transform.Translate(Vector2.right *  Time.deltaTime * currentMoveSpeed);
             }
         }
         else {
             isMovingRight = false;
         }
 
-        if ((Input.GetKeyDown("a") || Input.GetAxis("Horizontal") < -0.05) )
+        if ((Input.GetKeyDown("a") || Input.GetAxis("Horizontal") < -0.5) )
         {
             isMovingLeft = true;
             if(hangingDirection != HangingDirection.Left) {
                 	Quaternion temp = transform.rotation;
 	    	    	temp.y = 180f;
 		        	transform.rotation = temp;
-                    transform.Translate(Vector2.left *  Time.deltaTime * currentMoveSpeed);
+                    transform.Translate(Vector2.right *  Time.deltaTime * currentMoveSpeed);
             }
         } else {
             isMovingLeft = false;
@@ -72,9 +70,11 @@ public class moveChar : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D coll) {
+        Debug.Log("collision: " + coll.transform.name);
 		if(coll.transform.tag == "Ground") {
 			isGrounded = true;
 			currentMoveSpeed = moveSpeed;
+            Debug.Log("hit ground");
 		}
         if(isGrounded == false && coll.transform.tag == "Wall") {
             
