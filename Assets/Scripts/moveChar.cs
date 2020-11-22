@@ -11,7 +11,7 @@ public class moveChar : MonoBehaviour
     public bool isHanging = false;
     public bool isMovingRight = false;
     public bool isMovingLeft = false;
-    private float gravityScale;
+    public float gravityScale;
     public bool stopHanging = false;
     public float hangingTimer = 0f;
     public float hangingTime = 0.2f;
@@ -26,17 +26,6 @@ public class moveChar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(stopHanging) {
-            hangingTimer += Time.deltaTime;
-            if(hangingTimer > hangingTime) {
-                isHanging = false;
-                stopHanging = false;
-                isGrounded = false;
-                hangingTimer = 0f;
-                hangingDirection = HangingDirection.None;
-            }
-        }
-
         if ((Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0.05) )
         {
             isMovingRight = true;
@@ -94,20 +83,6 @@ public class moveChar : MonoBehaviour
         }
 	}
 
-    void OnTriggerEnter2D(Collider2D coll) {
-    if(isGrounded == false && coll.transform.tag == "Ledge") {
-            Debug.Log(transform.localEulerAngles.y);
-            if((this.transform.position.x > coll.transform.position.x && isMovingLeft) 
-            || (this.transform.position.x < coll.transform.position.x && isMovingRight) ) { 
-                 isHanging = true;
-                 if(this.transform.position.x > coll.transform.position.x) hangingDirection = HangingDirection.Left;
-                 if(this.transform.position.x < coll.transform.position.x) hangingDirection = HangingDirection.Right;
-                 GetComponent<Rigidbody2D>().gravityScale = 0;
-                 GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-                isGrounded = true;
-            }
-        }
-    }
     void OnCollisionStay2D(Collision2D coll) {
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Wall") {
 			isGrounded = true;
@@ -121,18 +96,12 @@ public class moveChar : MonoBehaviour
 		}
         if(coll.transform.tag == "Wall") {
             GetComponent<Rigidbody2D>().gravityScale = gravityScale;
-            stopHanging = true;
+            isGrounded = false;
+            isHanging = false;
+            hangingDirection = HangingDirection.None;
         }
 	}
 
-        void OnTriggerExit2D(Collider2D coll) {
-		if(coll.transform.tag == "Ground") {
-			isGrounded = false;
-		}
-        if(coll.transform.tag == "Ledge") {
-            GetComponent<Rigidbody2D>().gravityScale = gravityScale;
-            stopHanging = true;
-        }
-	}
+  
 
 }
