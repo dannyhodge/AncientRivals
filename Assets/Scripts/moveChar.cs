@@ -70,11 +70,9 @@ public class moveChar : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D coll) {
-        Debug.Log("collision: " + coll.transform.name);
-		if(coll.transform.tag == "Ground") {
+		if(coll.transform.tag == "Ground" || coll.transform.tag == "Javelin") {
 			isGrounded = true;
 			currentMoveSpeed = moveSpeed;
-            Debug.Log("hit ground");
 		}
         if(isGrounded == false && coll.transform.tag == "Wall") {
             

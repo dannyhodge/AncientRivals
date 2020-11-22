@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - Ledge
   - MidTorso
+  - Javelin
   layers:
   - Default
   - TransparentFX
