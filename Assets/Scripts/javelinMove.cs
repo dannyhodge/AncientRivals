@@ -1,33 +1,44 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class javelinMove : MonoBehaviour
 {
 
     public bool hitGround = false;
     public float rotateSpeed = 0.05f;
-    void Start() {
-        
-    }
-    // Update is called once per frame
+    public bool goingRight = true;
+    public float pushBackSpeed = 500f;
+    public bool isStraightVertical = false;
     void FixedUpdate()
     {
+        if(hitGround == false) {
+            Vector3 temp = transform.eulerAngles;
+            float modAngle = transform.localEulerAngles.z;
+            
+
+	         temp.z -= rotateSpeed;
         
-        if(transform.localEulerAngles.z < 45f && hitGround == false) {
-            Quaternion temp = transform.rotation;
-	        temp.z -= rotateSpeed;
-	    	transform.rotation = temp;
-        }
- 
+	    	   transform.eulerAngles = temp;
+            
+        }  
     }
 
     void OnCollisionEnter2D(Collision2D coll) {
-        if(coll.transform.tag != "Character") {
+        if(coll.transform.tag != "Player") {
            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
            GetComponent<Rigidbody2D>().gravityScale = 0f;
            GetComponent<BoxCollider2D>().isTrigger = true;
            hitGround = true;
+        }
+        if(coll.transform.tag == "Player" && coll.transform.name != "Character") {
+            coll.transform.gameObject.GetComponent<Rigidbody2D>().AddForce(GetComponent<Rigidbody2D>().velocity.normalized * pushBackSpeed);
+
+            this.transform.parent = coll.transform;
+            GetComponent<Rigidbody2D>().simulated = false;
+            GetComponent<BoxCollider2D>().enabled = false; 
+            hitGround = true;
         }
 	}
 }

@@ -1,29 +1,51 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class javelinThrow : MonoBehaviour
 {
-    public GameObject Javelin;
-    public GameObject javelinSpawnPoint;
+    public GameObject Javelin;              //prefab to throw
+    public GameObject javelinSpawnPoint;    //where it spawns from
     public float javelinMoveSpeed = 10f;
+    public GameObject JavelinAim;
 
     void Start() {
         foreach(Transform child in transform) {
+            if(child.name == "aimjavelin") JavelinAim = child.gameObject;
+        }
+        foreach(Transform child in JavelinAim.transform) {
             if(child.name == "javelinSpawnPoint") javelinSpawnPoint = child.gameObject;
         }
     }
 
     void Update()
     {
-        if (Input.GetKeyDown("enter") || Input.GetButtonDown("Throw")) 
+        if (Input.GetKey("enter") || Input.GetButton("Throw")) 
         {
-            Debug.Log("angle: " + javelinSpawnPoint.transform.eulerAngles.y);
-            Quaternion rotation = Quaternion.Euler(transform.rotation.x, javelinSpawnPoint.transform.eulerAngles.y, transform.rotation.z);
-            GameObject jav = Instantiate(Javelin, javelinSpawnPoint.transform.position,rotation);
-            if(this.transform.localEulerAngles.y == 180f) jav.GetComponent<Rigidbody2D>().AddForce(Vector2.left * javelinMoveSpeed);
-            if(this.transform.localEulerAngles.y == 0f) jav.GetComponent<Rigidbody2D>().AddForce(Vector2.right * javelinMoveSpeed);
+            GetComponent<moveChar>().currentMoveSpeed = 0;
+            float vertMovement = Input.GetAxis ("Vertical");
+            float horiMovement= Input.GetAxis ("Horizontal");
+            Vector3 temp = JavelinAim.transform.eulerAngles;
+	        float horizontalAngle = (Math.Abs(horiMovement) * 90f);
+            if(vertMovement > 0) horizontalAngle = 180f - horizontalAngle;
+            temp.z = horizontalAngle;
+	    	JavelinAim.transform.eulerAngles = temp;
         }
+
+        if (Input.GetKeyUp("enter") || Input.GetButtonUp("Throw")) 
+        {
+            Quaternion rotation = Quaternion.Euler(javelinSpawnPoint.transform.eulerAngles.x, javelinSpawnPoint.transform.eulerAngles.y * -1, javelinSpawnPoint.transform.eulerAngles.z);
+            GameObject jav = Instantiate(Javelin, javelinSpawnPoint.transform.position, rotation);
+            if(transform.localEulerAngles.y == 180f) jav.GetComponent<javelinMove>().goingRight = false;
+            if(transform.localEulerAngles.y == 0f) jav.GetComponent<javelinMove>().goingRight = true;
+            Vector3 targetDir = JavelinAim.transform.rotation * Vector3.down;
+            if(this.transform.localEulerAngles.y == 180f) jav.GetComponent<Rigidbody2D>().AddForce(targetDir * javelinMoveSpeed);
+            if(this.transform.localEulerAngles.y == 0f) jav.GetComponent<Rigidbody2D>().AddForce(targetDir * javelinMoveSpeed);
+
+            GetComponent<moveChar>().currentMoveSpeed = GetComponent<moveChar>().moveSpeed;
+        }
+                   
     }
 
     void FixedUpdate() {
