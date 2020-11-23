@@ -37,12 +37,9 @@ public class javelinThrow : MonoBehaviour
         {
             Quaternion rotation = Quaternion.Euler(javelinSpawnPoint.transform.eulerAngles.x, javelinSpawnPoint.transform.eulerAngles.y * -1, javelinSpawnPoint.transform.eulerAngles.z);
             GameObject jav = Instantiate(Javelin, javelinSpawnPoint.transform.position, rotation);
-            if(transform.localEulerAngles.y == 180f) jav.GetComponent<javelinMove>().goingRight = false;
-            if(transform.localEulerAngles.y == 0f) jav.GetComponent<javelinMove>().goingRight = true;
             Vector3 targetDir = JavelinAim.transform.rotation * Vector3.down;
-            if(this.transform.localEulerAngles.y == 180f) jav.GetComponent<Rigidbody2D>().AddForce(targetDir * javelinMoveSpeed);
-            if(this.transform.localEulerAngles.y == 0f) jav.GetComponent<Rigidbody2D>().AddForce(targetDir * javelinMoveSpeed);
-
+            if(JavelinAim.transform.eulerAngles.z > 170 && JavelinAim.transform.eulerAngles.z < 190) jav.GetComponent<javelinMove>().isStraightVertical = true;
+            jav.GetComponent<Rigidbody2D>().AddForce(targetDir * javelinMoveSpeed);
             GetComponent<moveChar>().currentMoveSpeed = GetComponent<moveChar>().moveSpeed;
         }
                    

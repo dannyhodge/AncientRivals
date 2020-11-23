@@ -5,23 +5,21 @@ using System;
 
 public class javelinMove : MonoBehaviour
 {
-
     public bool hitGround = false;
     public float rotateSpeed = 0.05f;
     public bool goingRight = true;
     public float pushBackSpeed = 500f;
     public bool isStraightVertical = false;
+
     void FixedUpdate()
     {
-        if(hitGround == false) {
+        if(hitGround == false && isStraightVertical == false) {
             Vector3 temp = transform.eulerAngles;
             float modAngle = transform.localEulerAngles.z;
-            
 
-	         temp.z -= rotateSpeed;
+	        temp.z -= rotateSpeed;
         
-	    	   transform.eulerAngles = temp;
-            
+	    	transform.eulerAngles = temp;
         }  
     }
 
