@@ -29,7 +29,7 @@ public class moveChar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if ((Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0.5) )
+        if ((Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0.1) )
         {
             isMovingRight = true;
             if(hangingDirection != HangingDirection.Right) {
@@ -44,7 +44,7 @@ public class moveChar : MonoBehaviour
             isMovingRight = false;
         }
 
-        if ((Input.GetKeyDown("a") || Input.GetAxis("Horizontal") < -0.5) )
+        if ((Input.GetKeyDown("a") || Input.GetAxis("Horizontal") < -0.1) )
         {
             isMovingLeft = true;
             if(hangingDirection != HangingDirection.Left) {
@@ -70,11 +70,9 @@ public class moveChar : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D coll) {
-        Debug.Log("collision: " + coll.transform.name);
-		if(coll.transform.tag == "Ground") {
+		if(coll.transform.tag == "Ground" || coll.transform.tag == "Javelin") {
 			isGrounded = true;
 			currentMoveSpeed = moveSpeed;
-            Debug.Log("hit ground");
 		}
         if(isGrounded == false && coll.transform.tag == "Wall") {
             
