@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class moveChar : MonoBehaviour
 {
@@ -19,16 +20,25 @@ public class moveChar : MonoBehaviour
     public float hangingTime = 0.2f;
     public HangingDirection hangingDirection = HangingDirection.None;
 
+    PhotonView PV;
+    Rigidbody2D RB;
+
     // Start is called before the first frame update
     void Start()
     {
         currentMoveSpeed = moveSpeed;
         gravityScale = GetComponent<Rigidbody2D>().gravityScale;
+        PV = GetComponent<PhotonView>();
+        RB = GetComponent<Rigidbody2D>();
+
+        if(!PV.IsMine) Destroy(RB);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(!PV.IsMine) return;
+
         if ((Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0.1) )
         {
             isMovingRight = true;
@@ -70,6 +80,7 @@ public class moveChar : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D coll) {
+        if(!PV.IsMine) return;
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Javelin") {
 			isGrounded = true;
 			currentMoveSpeed = moveSpeed;
@@ -88,6 +99,7 @@ public class moveChar : MonoBehaviour
 	}
 
     void OnCollisionStay2D(Collision2D coll) {
+        if(!PV.IsMine) return;
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Wall") {
 			isGrounded = true;
 		}
@@ -95,6 +107,7 @@ public class moveChar : MonoBehaviour
 	}
 
     void OnCollisionExit2D(Collision2D coll) {
+        if(!PV.IsMine) return;
 		if(coll.transform.tag == "Ground") {
 			isGrounded = false;
 		}
@@ -105,7 +118,4 @@ public class moveChar : MonoBehaviour
             hangingDirection = HangingDirection.None;
         }
 	}
-
-  
-
 }
