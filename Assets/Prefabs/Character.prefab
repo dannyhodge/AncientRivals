@@ -313,10 +313,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee1dff0733a10c40980b9d1f2609719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 4
-  jumpSpeed: 600
+  moveSpeed: 2
+  jumpSpeed: 26
   isGrounded: 0
-  jumpMoveSpeed: 4
+  jumpMoveSpeed: 3
   currentMoveSpeed: 10
   isHanging: 0
   isMovingRight: 0
@@ -326,11 +326,7 @@ MonoBehaviour:
   hangingTimer: 0
   hangingTime: 0.2
   hangingDirection: 2
-  devTesting: 0
-  LerpFix: 1
-  maxSpeed: 0.03
-  movementSpeed: 0.2
-  jumping: 0
+  xScale: 0
 --- !u!114 &7041933052971541726
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,10 +11,12 @@ public class javelinThrow : MonoBehaviour
     public GameObject javelinSpawnPoint;    //where it spawns from
     public float javelinMoveSpeed = 10f;
     public GameObject JavelinAim;
+    moveChar moveChar;
 
     PhotonView PV;
 
     void Start() {
+        moveChar = GetComponent<moveChar>();
 
         if(PhotonNetwork.IsConnected) PV = GetComponent<PhotonView>();
         foreach(Transform child in transform) {
@@ -31,11 +33,11 @@ public class javelinThrow : MonoBehaviour
 
         if (Input.GetKey("enter") || Input.GetButton("Throw")) 
         {
-            GetComponent<moveChar>().currentMoveSpeed = 0;
+            moveChar.currentMoveSpeed = 0;
             float vertMovement = Input.GetAxis ("Vertical");
             float horiMovement= Input.GetAxis ("Horizontal");
             Vector3 temp = JavelinAim.transform.eulerAngles;
-	        float horizontalAngle = (Math.Abs(horiMovement) * 90f);
+	        float horizontalAngle = ((horiMovement) * 90f);
             if(vertMovement > 0) horizontalAngle = 180f - horizontalAngle;
             temp.z = horizontalAngle;
 	    	JavelinAim.transform.eulerAngles = temp;
@@ -43,14 +45,18 @@ public class javelinThrow : MonoBehaviour
 
         if (Input.GetKeyUp("enter") || Input.GetButtonUp("Throw")) 
         {
-            Quaternion rotation = Quaternion.Euler(javelinSpawnPoint.transform.eulerAngles.x, javelinSpawnPoint.transform.eulerAngles.y * -1, javelinSpawnPoint.transform.eulerAngles.z);
+            Quaternion rotation = Quaternion.Euler(
+                javelinSpawnPoint.transform.eulerAngles.x, 
+                javelinSpawnPoint.transform.eulerAngles.y, 
+                JavelinAim.transform.eulerAngles.z - 90f);
+                
             GameObject jav;
             if(PhotonNetwork.IsConnected) jav = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Javelin"), javelinSpawnPoint.transform.position, rotation);
             else jav = Instantiate(Javelin, javelinSpawnPoint.transform.position, rotation);
             Vector3 targetDir = JavelinAim.transform.rotation * Vector3.down;
-            if(JavelinAim.transform.eulerAngles.z > 170 && JavelinAim.transform.eulerAngles.z < 190) jav.GetComponent<javelinMove>().isStraightVertical = true;
+            if(JavelinAim.transform.eulerAngles.z > 174 && JavelinAim.transform.eulerAngles.z < 186) jav.GetComponent<javelinMove>().isStraightVertical = true;
             jav.GetComponent<Rigidbody2D>().AddForce(targetDir * javelinMoveSpeed);
-            GetComponent<moveChar>().currentMoveSpeed = GetComponent<moveChar>().moveSpeed;
+            moveChar.currentMoveSpeed = moveChar.moveSpeed;
         }
                    
     }

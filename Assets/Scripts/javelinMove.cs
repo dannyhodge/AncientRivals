@@ -15,10 +15,13 @@ public class javelinMove : MonoBehaviour
     {
         if(hitGround == false && isStraightVertical == false) {
             Vector3 temp = transform.eulerAngles;
-            float modAngle = transform.localEulerAngles.z;
 
-	        temp.z -= rotateSpeed;
-        
+            if((transform.eulerAngles.z < 90 && transform.eulerAngles.z > 0) || (transform.eulerAngles.z > 270 && transform.eulerAngles.z < 360)) {
+                temp.z -= rotateSpeed;
+            }
+	        if(transform.eulerAngles.z > 90 && transform.eulerAngles.z < 270) {
+                temp.z += rotateSpeed;         
+                }
 	    	transform.eulerAngles = temp;
         }  
     }
