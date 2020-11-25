@@ -179,7 +179,8 @@ GameObject:
   - component: {fileID: 4332934960877956876}
   - component: {fileID: 6744234651754498825}
   - component: {fileID: 2787456672134056344}
-  - component: {fileID: 4993345043773794772}
+  - component: {fileID: 2025407665530881798}
+  - component: {fileID: -6203456731854190609}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -248,7 +249,7 @@ Rigidbody2D:
   m_AngularDrag: 0
   m_GravityScale: 5
   m_Material: {fileID: 0}
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
@@ -264,10 +265,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee1dff0733a10c40980b9d1f2609719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
-  jumpSpeed: 600
+  moveSpeed: 2
+  jumpSpeed: 26
   isGrounded: 0
-  jumpMoveSpeed: 4
+  jumpMoveSpeed: 3
   currentMoveSpeed: 10
   isHanging: 0
   isMovingRight: 0
@@ -277,8 +278,7 @@ MonoBehaviour:
   hangingTimer: 0
   hangingTime: 0.2
   hangingDirection: 2
-  devTesting: 0
-  LerpFix: 1
+  xScale: 0
 --- !u!114 &4332934960877956876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,12 +328,28 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 5078285052299330499}
-  - {fileID: 4993345043773794772}
+  - {fileID: 2025407665530881798}
+  - {fileID: -6203456731854190609}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &4993345043773794772
+--- !u!114 &2025407665530881798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4332934960630435467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e7cb724808c322458aa4d15f5035fa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 1
+  m_TeleportEnabled: 1
+  m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &-6203456731854190609
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -345,9 +361,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
+  m_SynchronizePosition: 0
+  m_SynchronizeRotation: 0
+  m_SynchronizeScale: 1
 --- !u!1 &4332934961470309776
 GameObject:
   m_ObjectHideFlags: 0

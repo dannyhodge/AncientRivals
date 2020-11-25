@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class moveChar : MonoBehaviourPun, IPunObservable
+public class moveChar : MonoBehaviourPun
 {
     public enum HangingDirection {Left, Right, None};
     public float moveSpeed = 10f;
@@ -20,74 +20,86 @@ public class moveChar : MonoBehaviourPun, IPunObservable
     public float hangingTime = 0.2f;
     public HangingDirection hangingDirection = HangingDirection.None;
 
-    public bool devTesting = false;
-
-    public float LerpFix = 1f;
-
     PhotonView PV;
     Rigidbody2D RB;
-    Vector3 selfPos;
-    Quaternion selfRot;
 
-    void Start()
+    public float xScale;
+
+    void Awake()
     {
         currentMoveSpeed = moveSpeed;
         gravityScale = GetComponent<Rigidbody2D>().gravityScale;
+        RB = GetComponent<Rigidbody2D>();
         if(PhotonNetwork.IsConnected) {
             PV = GetComponent<PhotonView>();
-            RB = GetComponent<Rigidbody2D>();
             if(!PV.IsMine) Destroy(RB);
         }
+        xScale = transform.localScale.x;
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if(PhotonNetwork.IsConnected) {
-            if(PV.IsMine) {
-               Move();
-            }
-            else {
-               SmoothPosition();
-            }
-        }
-        else {
+    if(PhotonNetwork.IsConnected) {
+        if(PV.IsMine) {
             Move();
         }
     }
-
-    void SmoothPosition() {
-        transform.position = Vector3.Lerp(transform.position, selfPos, Time.deltaTime * LerpFix);
-        transform.rotation = Quaternion.Lerp(transform.rotation, selfRot, Time.deltaTime * LerpFix);
+    else {
+        Move();
+    }
     }
 
-    public void OnEnable()
-    {
-        PhotonNetwork.AddCallbackTarget(this);
-    }
- 
-    public void OnDisable()
-    {
-        PhotonNetwork.RemoveCallbackTarget(this);
-    }
- 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
-        if(stream.IsWriting) {
-             if(PV.IsMine){
-               stream.SendNext(transform.position);
-               stream.SendNext(transform.rotation);
-             }
-        }
-        else {
-             if(!PV.IsMine) {
-                selfPos = (Vector3)stream.ReceiveNext();
-                selfRot = (Quaternion)stream.ReceiveNext();
-             }
+    void Update() {
+        if(!PV.IsMine) return;
+        if ((Input.GetKeyDown("space") || Input.GetButtonDown("Jump")) && isGrounded ) 
+        {
+		    if(!isHanging) isGrounded = false;
+            Vector3 forceRight = Vector3.up * 1000.0f * jumpSpeed * Time.fixedDeltaTime;
+            RB.AddForce(forceRight);
+            GetComponent<Rigidbody2D>().gravityScale = gravityScale;
         }
     }
+
+    void AddForce(Vector3 dir) {
+        Vector3 forceRight = dir * 1000.0f * currentMoveSpeed * Time.fixedDeltaTime;
+        if(RB.velocity.magnitude < moveSpeed * 4f) RB.AddForce(forceRight);
+    }
+
+    void Move() {
+              
+    if ((Input.GetKey("a") || Input.GetAxis("Horizontal") < -0.1) )
+        {
+            Vector3 SpriteScale = transform.localScale;
+            SpriteScale.x = -xScale;
+            transform.localScale = SpriteScale;
+            isMovingLeft = true;
+            if(hangingDirection != HangingDirection.Left) {
+                AddForce(Vector3.left);
+            }
+        } else {
+            isMovingLeft = false;
+        }
+
+    if ((Input.GetKey("d") || Input.GetAxis("Horizontal") > 0.1) )
+        {
+        Vector3 SpriteScale = transform.localScale;
+        SpriteScale.x = xScale;
+        transform.localScale = SpriteScale;
+        isMovingRight = true;
+        if(hangingDirection != HangingDirection.Right) {
+	
+            AddForce(Vector3.right);
+        }
+    }
+    else {
+        isMovingRight = false;
+    }     
+    }
+
     void OnCollisionEnter2D(Collision2D coll) {
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Javelin") {
 			isGrounded = true;
-			currentMoveSpeed = moveSpeed;
+			currentMoveSpeed = moveSpeed;   
 		}
         if(isGrounded == false && coll.transform.tag == "Wall") {
             
@@ -107,7 +119,6 @@ public class moveChar : MonoBehaviourPun, IPunObservable
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Wall") {
 			isGrounded = true;
 		}
- 
 	}
 
     void OnCollisionExit2D(Collision2D coll) {
@@ -123,43 +134,4 @@ public class moveChar : MonoBehaviourPun, IPunObservable
         }
 	}
 
-    void Move() {
-     if ((Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0.1) )
-        {
-            isMovingRight = true;
-            if(hangingDirection != HangingDirection.Right) {
-
-		    	Quaternion temp = transform.rotation;
-	    		temp.y = 0f;
-		    	transform.rotation = temp;
-                transform.Translate(Vector2.right *  Time.deltaTime * currentMoveSpeed, Space.World);
-            }
-        }
-        else {
-            isMovingRight = false;
-        }
-
-        if ((Input.GetKeyDown("a") || Input.GetAxis("Horizontal") < -0.1) )
-        {
-            isMovingLeft = true;
-            if(hangingDirection != HangingDirection.Left) {
-                	Quaternion temp = transform.rotation;
-	    	    	temp.y = 180f;
-		        	transform.rotation = temp;
-                    transform.Translate(Vector2.left *  Time.deltaTime * currentMoveSpeed, Space.World);
-            }
-        } else {
-            isMovingLeft = false;
-        }
-
-        if ((Input.GetKeyDown("space") || Input.GetButtonDown("Jump")) && isGrounded ) 
-        {
-            GetComponent<Rigidbody2D>().AddForce(Vector2.up * jumpSpeed);
-			currentMoveSpeed = jumpMoveSpeed;
-
-            if(!isHanging) isGrounded = false;
-            GetComponent<Rigidbody2D>().velocity = Vector3.zero;
-            GetComponent<Rigidbody2D>().gravityScale = gravityScale;
-        }
-    }
 }
