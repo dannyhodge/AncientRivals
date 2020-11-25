@@ -24,6 +24,9 @@ public class moveChar : MonoBehaviourPun, IPunObservable
 
     public float LerpFix = 1f;
 
+    public float maxSpeed = 0.1f;
+    public float movementSpeed = 2f;
+    public bool jumping = false;
     PhotonView PV;
     Rigidbody2D RB;
     Vector3 selfPos;
@@ -33,9 +36,9 @@ public class moveChar : MonoBehaviourPun, IPunObservable
     {
         currentMoveSpeed = moveSpeed;
         gravityScale = GetComponent<Rigidbody2D>().gravityScale;
+        RB = GetComponent<Rigidbody2D>();
         if(PhotonNetwork.IsConnected) {
             PV = GetComponent<PhotonView>();
-            RB = GetComponent<Rigidbody2D>();
             if(!PV.IsMine) Destroy(RB);
         }
     }
@@ -88,6 +91,7 @@ public class moveChar : MonoBehaviourPun, IPunObservable
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Javelin") {
 			isGrounded = true;
 			currentMoveSpeed = moveSpeed;
+            jumping = false;    
 		}
         if(isGrounded == false && coll.transform.tag == "Wall") {
             
@@ -124,42 +128,89 @@ public class moveChar : MonoBehaviourPun, IPunObservable
 	}
 
     void Move() {
-     if ((Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0.1) )
-        {
-            isMovingRight = true;
-            if(hangingDirection != HangingDirection.Right) {
-
-		    	Quaternion temp = transform.rotation;
-	    		temp.y = 0f;
-		    	transform.rotation = temp;
-                transform.Translate(Vector2.right *  Time.deltaTime * currentMoveSpeed, Space.World);
-            }
+        if ((Input.GetKeyDown("a") || Input.GetAxis("Horizontal") < -0.1) ) {
+                Quaternion temp = transform.rotation;
+	    	    temp.y = 180f;
+		        transform.rotation = temp;
         }
-        else {
-            isMovingRight = false;
+        if ((Input.GetKeyDown("d") || Input.GetAxis("Horizontal") > 0.1) ) {
+                Quaternion temp = transform.rotation;
+	    	    temp.y = 0f;
+		        transform.rotation = temp;
         }
 
-        if ((Input.GetKeyDown("a") || Input.GetAxis("Horizontal") < -0.1) )
+              
+    if ((Input.GetKey("a") || Input.GetAxis("Horizontal") < -0.1) )
         {
             isMovingLeft = true;
             if(hangingDirection != HangingDirection.Left) {
-                	Quaternion temp = transform.rotation;
-	    	    	temp.y = 180f;
-		        	transform.rotation = temp;
-                    transform.Translate(Vector2.left *  Time.deltaTime * currentMoveSpeed, Space.World);
+
+                if(isGrounded) {
+                    if (RB.velocity.magnitude < (maxSpeed * 1000.0f) )
+                    {
+                        Vector3 force = Vector3.left * 1000.0f * movementSpeed * Time.fixedDeltaTime;
+                        RB.AddForce(force);
+                        RB.velocity = RB.velocity.normalized;
+                    }
+                }
+                else {
+                    if (RB.velocity.magnitude < (maxSpeed * 100.0f) )
+                    {
+                        Vector3 force = Vector3.left * 10000.0f * movementSpeed * Time.fixedDeltaTime;
+                        RB.AddForce(force);
+                        
+                    }
+                }
             }
         } else {
             isMovingLeft = false;
         }
 
+    if ((Input.GetKey("d") || Input.GetAxis("Horizontal") > 0.1) )
+        {
+        isMovingRight = true;
+        if(hangingDirection != HangingDirection.Right) {
+	
+            AddForce();
+            //   if(isGrounded) {
+            //         if (RB.velocity.magnitude < (maxSpeed * 1000.0f) )
+            //         {
+            //             Vector3 force = Vector3.right * 1000.0f * movementSpeed * Time.fixedDeltaTime;
+            //             RB.AddForce(force);
+            //             RB.velocity = RB.velocity.normalized;
+            //         }
+            //     }
+            //     else {
+            //         if (RB.velocity.magnitude < (maxSpeed * 100.0f) )
+            //         {
+            //             Vector3 force = Vector3.right * 1000.0f * movementSpeed * Time.fixedDeltaTime;
+            //             RB.AddForce(force);
+                    
+            //         }
+            //     }
+        }
+    }
+    else {
+        isMovingRight = false;
+    }
+
         if ((Input.GetKeyDown("space") || Input.GetButtonDown("Jump")) && isGrounded ) 
         {
-            GetComponent<Rigidbody2D>().AddForce(Vector2.up * jumpSpeed);
+            jumping = true;
+            GetComponent<Rigidbody2D>().AddRelativeForce(Vector2.up * jumpSpeed);
 			currentMoveSpeed = jumpMoveSpeed;
 
             if(!isHanging) isGrounded = false;
-            GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+          //  GetComponent<Rigidbody2D>().velocity = Vector3.zero;
             GetComponent<Rigidbody2D>().gravityScale = gravityScale;
         }
+    }
+
+    void AddForce() {
+            Vector3 forceRight = Vector3.right * 1000.0f * movementSpeed * Time.fixedDeltaTime;
+            RB.AddForce(forceRight);
+            Vector3 forceUp = Vector3.up * jumpSpeed* Time.fixedDeltaTime;
+            RB.AddForce(forceUp);
+            RB.velocity = RB.velocity.normalized;
     }
 }
