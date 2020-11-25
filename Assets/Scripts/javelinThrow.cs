@@ -15,7 +15,8 @@ public class javelinThrow : MonoBehaviour
     PhotonView PV;
 
     void Start() {
-        PV = GetComponent<PhotonView>();
+
+        if(PhotonNetwork.IsConnected) PV = GetComponent<PhotonView>();
         foreach(Transform child in transform) {
             if(child.name == "aimjavelin") JavelinAim = child.gameObject;
         }
@@ -26,7 +27,8 @@ public class javelinThrow : MonoBehaviour
 
     void Update()
     {
-        if(!PV.IsMine) return;
+        if(PhotonNetwork.IsConnected) if(!PV.IsMine) return;
+
         if (Input.GetKey("enter") || Input.GetButton("Throw")) 
         {
             GetComponent<moveChar>().currentMoveSpeed = 0;
@@ -42,7 +44,9 @@ public class javelinThrow : MonoBehaviour
         if (Input.GetKeyUp("enter") || Input.GetButtonUp("Throw")) 
         {
             Quaternion rotation = Quaternion.Euler(javelinSpawnPoint.transform.eulerAngles.x, javelinSpawnPoint.transform.eulerAngles.y * -1, javelinSpawnPoint.transform.eulerAngles.z);
-            GameObject jav = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Javelin"), javelinSpawnPoint.transform.position, rotation);
+            GameObject jav;
+            if(PhotonNetwork.IsConnected) jav = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Javelin"), javelinSpawnPoint.transform.position, rotation);
+            else jav = Instantiate(Javelin, javelinSpawnPoint.transform.position, rotation);
             Vector3 targetDir = JavelinAim.transform.rotation * Vector3.down;
             if(JavelinAim.transform.eulerAngles.z > 170 && JavelinAim.transform.eulerAngles.z < 190) jav.GetComponent<javelinMove>().isStraightVertical = true;
             jav.GetComponent<Rigidbody2D>().AddForce(targetDir * javelinMoveSpeed);

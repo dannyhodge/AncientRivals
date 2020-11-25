@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class moveChar : MonoBehaviourPun, IPunObservable
+public class moveChar2 : MonoBehaviour
 {
     public enum HangingDirection {Left, Right, None};
     public float moveSpeed = 10f;
@@ -20,70 +20,29 @@ public class moveChar : MonoBehaviourPun, IPunObservable
     public float hangingTime = 0.2f;
     public HangingDirection hangingDirection = HangingDirection.None;
 
-    public bool devTesting = false;
-
-    public float LerpFix = 1f;
-
     PhotonView PV;
     Rigidbody2D RB;
-    Vector3 selfPos;
-    Quaternion selfRot;
 
+    // Start is called before the first frame update
     void Start()
     {
         currentMoveSpeed = moveSpeed;
         gravityScale = GetComponent<Rigidbody2D>().gravityScale;
-        if(PhotonNetwork.IsConnected) {
-            PV = GetComponent<PhotonView>();
-            RB = GetComponent<Rigidbody2D>();
-            if(!PV.IsMine) Destroy(RB);
-        }
+        PV = GetComponent<PhotonView>();
+        RB = GetComponent<Rigidbody2D>();
+
+        //if(!PV.IsMine) Destroy(RB);
     }
 
+    // Update is called once per frame
     void Update()
     {
-        if(PhotonNetwork.IsConnected) {
-            if(PV.IsMine) {
-               Move();
-            }
-            else {
-               SmoothPosition();
-            }
-        }
-        else {
-            Move();
-        }
+        if(!PV.IsMine) return;
+        else Move();
+
+        
     }
 
-    void SmoothPosition() {
-        transform.position = Vector3.Lerp(transform.position, selfPos, Time.deltaTime * LerpFix);
-        transform.rotation = Quaternion.Lerp(transform.rotation, selfRot, Time.deltaTime * LerpFix);
-    }
-
-    public void OnEnable()
-    {
-        PhotonNetwork.AddCallbackTarget(this);
-    }
- 
-    public void OnDisable()
-    {
-        PhotonNetwork.RemoveCallbackTarget(this);
-    }
- 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
-        if(stream.IsWriting) {
-             if(PV.IsMine){
-               stream.SendNext(transform.position);
-               stream.SendNext(transform.rotation);
-             }
-        }
-        else {
-             if(!PV.IsMine) {
-                selfPos = (Vector3)stream.ReceiveNext();
-                selfRot = (Quaternion)stream.ReceiveNext();
-             }
-        }
-    }
     void OnCollisionEnter2D(Collision2D coll) {
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Javelin") {
 			isGrounded = true;
@@ -103,7 +62,7 @@ public class moveChar : MonoBehaviourPun, IPunObservable
 	}
 
     void OnCollisionStay2D(Collision2D coll) {
-        if(PhotonNetwork.IsConnected) if(!PV.IsMine) return;
+        if(!PV.IsMine) return;
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Wall") {
 			isGrounded = true;
 		}
@@ -111,7 +70,7 @@ public class moveChar : MonoBehaviourPun, IPunObservable
 	}
 
     void OnCollisionExit2D(Collision2D coll) {
-        if(PhotonNetwork.IsConnected) if(!PV.IsMine) return;
+        if(!PV.IsMine) return;
 		if(coll.transform.tag == "Ground") {
 			isGrounded = false;
 		}
@@ -132,7 +91,7 @@ public class moveChar : MonoBehaviourPun, IPunObservable
 		    	Quaternion temp = transform.rotation;
 	    		temp.y = 0f;
 		    	transform.rotation = temp;
-                transform.Translate(Vector2.right *  Time.deltaTime * currentMoveSpeed, Space.World);
+                transform.Translate(Vector2.right *  Time.deltaTime * currentMoveSpeed);
             }
         }
         else {
@@ -146,7 +105,7 @@ public class moveChar : MonoBehaviourPun, IPunObservable
                 	Quaternion temp = transform.rotation;
 	    	    	temp.y = 180f;
 		        	transform.rotation = temp;
-                    transform.Translate(Vector2.left *  Time.deltaTime * currentMoveSpeed, Space.World);
+                    transform.Translate(Vector2.right *  Time.deltaTime * currentMoveSpeed);
             }
         } else {
             isMovingLeft = false;
