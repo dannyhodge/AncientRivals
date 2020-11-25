@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class ledgeCollider : MonoBehaviour
 {
     public GameObject mainCharacter;
-
-    void Start()
+    PhotonView PV;
+    
+    void Awake()
     {
+        if(PhotonNetwork.IsConnected) PV = GetComponent<PhotonView>();
         mainCharacter = this.transform.parent.gameObject;
     }
 

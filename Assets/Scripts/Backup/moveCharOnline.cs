@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class moveChar : MonoBehaviourPun, IPunObservable
+public class moveChar3 : MonoBehaviourPun, IPunObservable
 {
     public enum HangingDirection {Left, Right, None};
     public float moveSpeed = 10f;
@@ -33,16 +33,15 @@ public class moveChar : MonoBehaviourPun, IPunObservable
     {
         currentMoveSpeed = moveSpeed;
         gravityScale = GetComponent<Rigidbody2D>().gravityScale;
-        if(PhotonNetwork.IsConnected) {
-            PV = GetComponent<PhotonView>();
-            RB = GetComponent<Rigidbody2D>();
-            if(!PV.IsMine) Destroy(RB);
-        }
+        PV = GetComponent<PhotonView>();
+        RB = GetComponent<Rigidbody2D>();
+
+        if(!PV.IsMine) Destroy(RB);
     }
 
     void Update()
     {
-        if(PhotonNetwork.IsConnected) {
+        if(!devTesting) {
             if(PV.IsMine) {
                Move();
             }
@@ -103,7 +102,7 @@ public class moveChar : MonoBehaviourPun, IPunObservable
 	}
 
     void OnCollisionStay2D(Collision2D coll) {
-        if(PhotonNetwork.IsConnected) if(!PV.IsMine) return;
+        if(!PV.IsMine) return;
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Wall") {
 			isGrounded = true;
 		}
@@ -111,7 +110,7 @@ public class moveChar : MonoBehaviourPun, IPunObservable
 	}
 
     void OnCollisionExit2D(Collision2D coll) {
-        if(PhotonNetwork.IsConnected) if(!PV.IsMine) return;
+        if(!PV.IsMine) return;
 		if(coll.transform.tag == "Ground") {
 			isGrounded = false;
 		}

@@ -174,12 +174,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4332934960630435478}
   - component: {fileID: 4332934960630435465}
-  - component: {fileID: 4332934960630435464}
-  - component: {fileID: 4332934960630435479}
+  - component: {fileID: 5523526104169178614}
+  - component: {fileID: 5078285052299330499}
   - component: {fileID: 4332934960877956876}
   - component: {fileID: 6744234651754498825}
   - component: {fileID: 2787456672134056344}
-  - component: {fileID: 8097776460360563460}
+  - component: {fileID: 4993345043773794772}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -231,7 +231,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.65, y: 2.81}
   m_EdgeRadius: 0
---- !u!50 &4332934960630435464
+--- !u!50 &5523526104169178614
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -252,7 +252,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &4332934960630435479
+--- !u!114 &5078285052299330499
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -264,10 +264,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee1dff0733a10c40980b9d1f2609719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 4
-  jumpSpeed: 600
+  moveSpeed: 10
+  jumpSpeed: 10
   isGrounded: 0
-  jumpMoveSpeed: 5
+  jumpMoveSpeed: 10
   currentMoveSpeed: 10
   isHanging: 0
   isMovingRight: 0
@@ -277,6 +277,8 @@ MonoBehaviour:
   hangingTimer: 0
   hangingTime: 0.2
   hangingDirection: 2
+  devTesting: 0
+  LerpFix: 1
 --- !u!114 &4332934960877956876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,11 +327,13 @@ MonoBehaviour:
   observableSearch: 2
   Synchronization: 3
   OwnershipTransfer: 0
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 5078285052299330499}
+  - {fileID: 4993345043773794772}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &8097776460360563460
+--- !u!114 &4993345043773794772
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -436,7 +440,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6269283035464651046}
   - component: {fileID: 6269283035464651044}
-  - component: {fileID: 6269283035464651047}
+  - component: {fileID: 2848205078725573209}
   m_Layer: 0
   m_Name: ledgeCollider
   m_TagString: MidTorso
@@ -484,7 +488,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.58, y: 0.73}
   m_EdgeRadius: 0
---- !u!114 &6269283035464651047
+--- !u!114 &2848205078725573209
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -553,7 +557,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9047258340742651892}
   m_LocalRotation: {x: -0, y: -0, z: -0.70846456, w: 0.70574635}
-  m_LocalPosition: {x: -0.005, y: -3.11, z: 0}
+  m_LocalPosition: {x: -0, y: -4.15, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8367530198773472098}

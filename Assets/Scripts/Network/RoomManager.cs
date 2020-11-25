@@ -16,6 +16,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         DontDestroyOnLoad(gameObject);
         Instance = this;
+
+        PhotonNetwork.SendRate = 30;
     }
     
     public override void OnEnable() {

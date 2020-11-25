@@ -19,6 +19,11 @@ public class PlayerManager : MonoBehaviour
     }
 
     void CreateController() {
-         PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Character"), new Vector3(4.8f, -3.8f, 2f), Quaternion.identity);
+        if(PhotonNetwork.IsMasterClient) {
+            PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Character"), new Vector3(-4.8f, -3.8f, 2f), Quaternion.identity);
+        }
+        else {
+            PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Character"), new Vector3(4.8f, -3.8f, 2f), Quaternion.identity);
+        }
     }
 }
