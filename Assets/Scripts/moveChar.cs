@@ -6,6 +6,7 @@ using Photon.Pun;
 public class moveChar : MonoBehaviourPun
 {
     public enum HangingDirection {Left, Right, None};
+    public float maxMoveSpeed = 3f;
     public float moveSpeed = 10f;
     public float jumpSpeed = 10f;
     public bool isGrounded = false;
@@ -50,7 +51,9 @@ public class moveChar : MonoBehaviourPun
     }
 
     void Update() {
-        if(!PV.IsMine) return;
+        if(PV) {
+         if(!PV.IsMine) return;
+        }
         if ((Input.GetKeyDown("space") || Input.GetButtonDown("Jump")) && isGrounded ) 
         {
 		    if(!isHanging) isGrounded = false;
@@ -62,7 +65,7 @@ public class moveChar : MonoBehaviourPun
 
     void AddForce(Vector3 dir) {
         Vector3 forceRight = dir * 1000.0f * currentMoveSpeed * Time.fixedDeltaTime;
-        if(RB.velocity.magnitude < moveSpeed * 4f) RB.AddForce(forceRight);
+        if(RB.velocity.magnitude < maxMoveSpeed) RB.AddForce(forceRight);
     }
 
     void Move() {
