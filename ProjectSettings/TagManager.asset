@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - Wall
+  - Ledge
+  - MidTorso
+  - Javelin
   layers:
   - Default
   - TransparentFX
