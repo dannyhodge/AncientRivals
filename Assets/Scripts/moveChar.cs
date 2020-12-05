@@ -6,16 +6,19 @@ using Photon.Pun;
 public class moveChar : MonoBehaviourPun
 {
     public enum HangingDirection {Left, Right, None};
+    public float maxMoveSpeed = 3f;
     public float moveSpeed = 10f;
     public float jumpSpeed = 10f;
+    public float sideJumpSpeed = 80f;
+
     public bool isGrounded = false;
-	public float jumpMoveSpeed = 10f;
-	public float currentMoveSpeed = 10f;
-    public bool isHanging = false;
+	
     public bool isMovingRight = false;
     public bool isMovingLeft = false;
     public float gravityScale;
-    public bool stopHanging = false;
+
+    public bool hangingBuffer = false;
+    public bool isHanging = false;
     public float hangingTimer = 0f;
     public float hangingTime = 0.2f;
     public HangingDirection hangingDirection = HangingDirection.None;
@@ -27,7 +30,6 @@ public class moveChar : MonoBehaviourPun
 
     void Awake()
     {
-        currentMoveSpeed = moveSpeed;
         gravityScale = GetComponent<Rigidbody2D>().gravityScale;
         RB = GetComponent<Rigidbody2D>();
         if(PhotonNetwork.IsConnected) {
@@ -50,19 +52,38 @@ public class moveChar : MonoBehaviourPun
     }
 
     void Update() {
-        if(!PV.IsMine) return;
+        if(PV) {
+         if(!PV.IsMine) return;
+        }
+        if(hangingBuffer) {
+            if(hangingTimer < hangingTime) {
+                hangingTimer += Time.deltaTime;
+            }
+            else {
+                hangingTimer = 0f;
+                hangingBuffer = false;
+                isGrounded = false;
+                hangingDirection = HangingDirection.None;
+            }
+        }
         if ((Input.GetKeyDown("space") || Input.GetButtonDown("Jump")) && isGrounded ) 
         {
-		    if(!isHanging) isGrounded = false;
-            Vector3 forceRight = Vector3.up * 1000.0f * jumpSpeed * Time.fixedDeltaTime;
-            RB.AddForce(forceRight);
+		    if(!hangingBuffer) isGrounded = false;
+
+            Vector3 forceJump = Vector3.up * jumpSpeed * Time.fixedDeltaTime;
+            Vector3 forceRight = Vector3.right * sideJumpSpeed * moveSpeed * Time.fixedDeltaTime;
+            Vector3 forceLeft = Vector3.left * sideJumpSpeed * moveSpeed * Time.fixedDeltaTime;
+            RB.AddForce(forceJump, ForceMode2D.Impulse);
+            
+            if(isMovingRight) RB.AddForce(forceRight, ForceMode2D.Impulse);
+            if(isMovingLeft) RB.AddForce(forceLeft, ForceMode2D.Impulse);
             GetComponent<Rigidbody2D>().gravityScale = gravityScale;
         }
     }
 
     void AddForce(Vector3 dir) {
-        Vector3 forceRight = dir * 1000.0f * currentMoveSpeed * Time.fixedDeltaTime;
-        if(RB.velocity.magnitude < moveSpeed * 4f) RB.AddForce(forceRight);
+        Vector3 forceRight = dir * 1000.0f * moveSpeed * Time.fixedDeltaTime;
+        if(RB.velocity.magnitude < maxMoveSpeed) RB.AddForce(forceRight);
     }
 
     void Move() {
@@ -98,39 +119,38 @@ public class moveChar : MonoBehaviourPun
 
     void OnCollisionEnter2D(Collision2D coll) {
 		if(coll.transform.tag == "Ground" || coll.transform.tag == "Javelin") {
-			isGrounded = true;
-			currentMoveSpeed = moveSpeed;   
+            if(!isHanging) {
+		    	isGrounded = true;
+            }
+            hangingDirection = HangingDirection.None;
 		}
         if(isGrounded == false && coll.transform.tag == "Wall") {
             
-            if((this.transform.position.x > coll.transform.position.x && transform.localEulerAngles.y == 180f) 
-            || (this.transform.position.x < coll.transform.position.x && transform.localEulerAngles.y == 0f) ) { 
+            if((this.transform.position.x > coll.transform.position.x && transform.localScale.x < 0) 
+            || (this.transform.position.x < coll.transform.position.x && transform.localScale.x > 0 )) { 
                 if(this.transform.position.x > coll.transform.position.x) hangingDirection = HangingDirection.Left;
                 if(this.transform.position.x < coll.transform.position.x) hangingDirection = HangingDirection.Right;
                 GetComponent<Rigidbody2D>().gravityScale = gravityScale / 10;
                 GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-                isGrounded = true;
             }
         }
 	}
 
     void OnCollisionStay2D(Collision2D coll) {
         if(PhotonNetwork.IsConnected) if(!PV.IsMine) return;
-		if(coll.transform.tag == "Ground" || coll.transform.tag == "Wall") {
+		if(coll.transform.tag == "Ground") {
 			isGrounded = true;
+            
 		}
 	}
 
     void OnCollisionExit2D(Collision2D coll) {
         if(PhotonNetwork.IsConnected) if(!PV.IsMine) return;
 		if(coll.transform.tag == "Ground") {
-			isGrounded = false;
+			if(!hangingBuffer) isGrounded = false;
 		}
         if(coll.transform.tag == "Wall") {
             GetComponent<Rigidbody2D>().gravityScale = gravityScale;
-            isGrounded = false;
-            isHanging = false;
-            hangingDirection = HangingDirection.None;
         }
 	}
 
