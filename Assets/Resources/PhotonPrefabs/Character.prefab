@@ -236,13 +236,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4332934960630435467}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.508879, y: -4.17, z: 2}
+  m_LocalPosition: {x: -3.858128, y: -2.8876374, z: 2}
   m_LocalScale: {x: 0.35, y: 0.35, z: 1}
   m_Children:
   - {fileID: 4332934959475829979}
   - {fileID: 4332934961470309777}
-  - {fileID: 6269283035464651046}
   - {fileID: 8367530198773472098}
+  - {fileID: 6269283035464651046}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -305,17 +305,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee1dff0733a10c40980b9d1f2609719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxMoveSpeed: 3
+  maxMoveSpeed: 5
   moveSpeed: 2
-  jumpSpeed: 26
+  jumpSpeed: 650
+  sideJumpSpeed: 70
   isGrounded: 0
-  jumpMoveSpeed: 3
-  currentMoveSpeed: 10
-  isHanging: 0
   isMovingRight: 0
   isMovingLeft: 0
   gravityScale: 0
-  stopHanging: 0
+  hangingBuffer: 0
+  isHanging: 0
   hangingTimer: 0
   hangingTime: 0.2
   hangingDirection: 2
@@ -336,6 +335,7 @@ MonoBehaviour:
   javelinSpawnPoint: {fileID: 0}
   javelinMoveSpeed: 120
   JavelinAim: {fileID: 0}
+  charMoveSpeed: 5
 --- !u!114 &6744234651754498825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -512,12 +512,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6269283035464651097}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.14, y: -0.275, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4332934960630435478}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &6269283035464651044
 BoxCollider2D:
@@ -532,7 +532,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.61, y: 0}
+  m_Offset: {x: 0.61, y: -0.4}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -543,7 +543,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.58, y: 0.73}
+  m_Size: {x: 0.67, y: 1.65}
   m_EdgeRadius: 0
 --- !u!114 &2848205078725573209
 MonoBehaviour:
@@ -588,7 +588,7 @@ Transform:
   - {fileID: 4016180226917686518}
   - {fileID: 678565411566403165}
   m_Father: {fileID: 4332934960630435478}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!1 &9047258340742651892
 GameObject:

@@ -12,12 +12,13 @@ public class javelinThrow : MonoBehaviour
     public float javelinMoveSpeed = 10f;
     public GameObject JavelinAim;
     moveChar moveChar;
-
+    public float charMoveSpeed = 5f;
     PhotonView PV;
 
     void Start() {
+       
         moveChar = GetComponent<moveChar>();
-
+        charMoveSpeed = moveChar.moveSpeed;
         if(PhotonNetwork.IsConnected) PV = GetComponent<PhotonView>();
         foreach(Transform child in transform) {
             if(child.name == "aimjavelin") JavelinAim = child.gameObject;
@@ -33,7 +34,7 @@ public class javelinThrow : MonoBehaviour
 
         if (Input.GetKey("enter") || Input.GetButton("Throw")) 
         {
-            moveChar.currentMoveSpeed = 0;
+            moveChar.moveSpeed = 0;
             float vertMovement = Input.GetAxis ("Vertical");
             float horiMovement= Input.GetAxis ("Horizontal");
             Vector3 temp = JavelinAim.transform.eulerAngles;
@@ -56,7 +57,7 @@ public class javelinThrow : MonoBehaviour
             Vector3 targetDir = JavelinAim.transform.rotation * Vector3.down;
             if(JavelinAim.transform.eulerAngles.z > 174 && JavelinAim.transform.eulerAngles.z < 186) jav.GetComponent<javelinMove>().isStraightVertical = true;
             jav.GetComponent<Rigidbody2D>().AddForce(targetDir * javelinMoveSpeed);
-            moveChar.currentMoveSpeed = moveChar.moveSpeed;
+            moveChar.moveSpeed = charMoveSpeed;
         }
                    
     }
