@@ -11,10 +11,12 @@ public class javelinThrow : MonoBehaviour
     public GameObject javelinSpawnPoint;    //where it spawns from
     public float javelinMoveSpeed = 10f;
     public GameObject JavelinAim;
-    moveChar moveChar;
+    
     public float charMoveSpeed = 5f;
-    PhotonView PV;
+    public bool hasJavelin = true;
 
+    PhotonView PV;
+    moveChar moveChar;
     void Start() {
        
         moveChar = GetComponent<moveChar>();
@@ -31,9 +33,10 @@ public class javelinThrow : MonoBehaviour
     void Update()
     {
         if(PhotonNetwork.IsConnected) if(!PV.IsMine) return;
-
+        if(hasJavelin) {
         if (Input.GetKey("enter") || Input.GetButton("Throw")) 
         {
+            JavelinAim.SetActive(true);
             moveChar.moveSpeed = 0;
             float vertMovement = Input.GetAxis ("Vertical");
             float horiMovement= Input.GetAxis ("Horizontal");
@@ -46,6 +49,7 @@ public class javelinThrow : MonoBehaviour
 
         if (Input.GetKeyUp("enter") || Input.GetButtonUp("Throw")) 
         {
+            JavelinAim.SetActive(false);
             Quaternion rotation = Quaternion.Euler(
                 javelinSpawnPoint.transform.eulerAngles.x, 
                 javelinSpawnPoint.transform.eulerAngles.y, 
@@ -58,8 +62,9 @@ public class javelinThrow : MonoBehaviour
             if(JavelinAim.transform.eulerAngles.z > 174 && JavelinAim.transform.eulerAngles.z < 186) jav.GetComponent<javelinMove>().isStraightVertical = true;
             jav.GetComponent<Rigidbody2D>().AddForce(targetDir * javelinMoveSpeed);
             moveChar.moveSpeed = charMoveSpeed;
+            hasJavelin = false;
         }
-                   
+        }    
     }
 
 }

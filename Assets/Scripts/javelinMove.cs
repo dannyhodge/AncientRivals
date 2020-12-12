@@ -32,6 +32,7 @@ public class javelinMove : MonoBehaviour
            GetComponent<Rigidbody2D>().gravityScale = 0f;
            GetComponent<BoxCollider2D>().isTrigger = true;
            hitGround = true;
+           this.transform.GetChild(0).gameObject.SetActive(true);
         }
         if(coll.transform.tag == "Player" && coll.transform.name != "Character") {
             coll.transform.gameObject.GetComponent<Rigidbody2D>().AddForce(GetComponent<Rigidbody2D>().velocity.normalized * pushBackSpeed);
@@ -40,6 +41,7 @@ public class javelinMove : MonoBehaviour
             GetComponent<Rigidbody2D>().simulated = false;
             GetComponent<BoxCollider2D>().enabled = false; 
             hitGround = true;
+            this.transform.GetChild(0).gameObject.SetActive(true);
         }
 	}
 }
