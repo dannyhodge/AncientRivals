@@ -4,10 +4,12 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     public static RoomManager Instance;
+    public int playerIndex = 0;
 
     void Awake() {
         if(Instance) {
@@ -16,7 +18,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         DontDestroyOnLoad(gameObject);
         Instance = this;
-
+        
         PhotonNetwork.SendRate = 30;
     }
     
@@ -32,13 +34,16 @@ public class RoomManager : MonoBehaviourPunCallbacks
     
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
+        foreach(var player in PhotonNetwork.PlayerList) {
+            if(player.NickName == PhotonNetwork.NickName) {
+                playerIndex = Array.IndexOf(PhotonNetwork.PlayerList, player);
+                Debug.Log(playerIndex);
+            }
+        }
         if(scene.buildIndex == 1) {
-            PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "PlayerManager"), Vector3.zero, Quaternion.identity);
+            var PM = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "PlayerManager"), Vector3.zero, Quaternion.identity);
+            PM.GetComponent<PlayerManager>().order = playerIndex;
         }
     }
 
-    void Update()
-    {
-        
-    }
 }

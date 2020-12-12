@@ -9,6 +9,8 @@ TagManager:
   - Ledge
   - MidTorso
   - Javelin
+  - WeaponPickup
+  - Spawn
   layers:
   - Default
   - TransparentFX

@@ -66,3 +66,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebb665036545d194bba667c77b2cc1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SpawnPoint: {fileID: 0}
+  time: 0.1
+  time2: 0.1
+  characterPath: 
+  order: 0
