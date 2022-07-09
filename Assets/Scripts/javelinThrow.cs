@@ -14,6 +14,8 @@ public class javelinThrow : MonoBehaviour
     public float charMoveSpeed = 5f;
     public bool hasJavelin = true;
 
+    public bool infiniteJavelinsHack = false;
+
     moveChar moveChar;
     void Start() {
        
@@ -57,7 +59,8 @@ public class javelinThrow : MonoBehaviour
             if(JavelinAim.transform.eulerAngles.z > 174 && JavelinAim.transform.eulerAngles.z < 186) jav.GetComponent<javelinMove>().isStraightVertical = true;
             jav.GetComponent<Rigidbody2D>().AddForce(targetDir * javelinMoveSpeed);
             moveChar.moveSpeed = charMoveSpeed;
-            hasJavelin = false;
+            if (infiniteJavelinsHack) hasJavelin = true;
+            else hasJavelin = false;
         }
         }    
     }

@@ -346,6 +346,7 @@ MonoBehaviour:
   JavelinAim: {fileID: 0}
   charMoveSpeed: 5
   hasJavelin: 1
+  infiniteJavelinsHack: 1
 --- !u!114 &2076573915
 MonoBehaviour:
   m_ObjectHideFlags: 0
