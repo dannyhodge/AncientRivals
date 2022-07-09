@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class GameManager : MonoBehaviour
+public class GameManagerArchived : MonoBehaviour
 {
     public GameObject character;
     public List<GameObject> spawns;
@@ -16,9 +17,9 @@ public class GameManager : MonoBehaviour
         characters.Add("templarred");
         characters.Add("templarblue");
         characters.Add("samuraiblue");
-        
-        Instantiate(character, spawns[0].transform.position, character.transform.rotation);
-        
+        if(!PhotonNetwork.IsConnected) {
+            Instantiate(character, spawns[0].transform.position, character.transform.rotation);
+        }
     }
 
     public Transform GetSpawnPoint(int order) {

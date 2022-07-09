@@ -210,6 +210,8 @@ MonoBehaviour:
   goingRight: 1
   pushBackSpeed: 500
   isStraightVertical: 0
+  GS: {fileID: 0}
+  playerHit: {fileID: 0}
 --- !u!114 &5274651736962187214
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class setupCharacter : MonoBehaviour
+public class setupCharacterArchived : MonoBehaviour
 {
     GameManager GM;
+    PhotonView PV;
 
     void Start()
     {

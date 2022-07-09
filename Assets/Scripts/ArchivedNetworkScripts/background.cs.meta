@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 35a5f14e33f26934ab6f7382c14c0966
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - mySprite1: {fileID: 21300000, guid: 3c4a46e026339b84392ca51e2f62bcf1, type: 3}
+  - mySprite2: {fileID: 21300000, guid: 39e91c8fb9f5af24bb7145b5b1b7867b, type: 3}
+  - mySprite3: {fileID: 21300000, guid: a6129f918b305ab45b890abb7e9551c3, type: 3}
+  - mySprite4: {fileID: 21300000, guid: 6282bc776d18b924883e9e41c4984cb0, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

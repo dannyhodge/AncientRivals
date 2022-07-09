@@ -32,31 +32,26 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     void CreateController() {
         PV.RPC("GetSpawnPoint", RpcTarget.All);
         PV.RPC("GetCharacter", RpcTarget.All);
-        PV.RPC("AddCharacterToGameState", RpcTarget.All);
+        
         PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", characterPath), SpawnPoint.position, SpawnPoint.rotation);
+
+        PV.RPC("AddCharacterToGameState", RpcTarget.All);
     }
 
     [PunRPC]
     void GetSpawnPoint() {
-        // while (time > 0f) {
-        //   time -= Time.deltaTime;
-        // } 
         SpawnPoint = GM.GetSpawnPoint(order);       
     }
 
     [PunRPC]
     void GetCharacter() {
-        // while (time2 > 0f) {
-        //   time2 -= Time.deltaTime;
-        // } 
         characterPath = GM.GetCharacterPrefabPath(order);    
-        Debug.Log("charpath: " + characterPath);
     }
 
     [PunRPC]
     void AddCharacterToGameState() {
        GS.scores.Add(new PlayerScore { playerName = PhotonNetwork.NickName, score = 0, alive = true });  
+       GS.playersLeftAlive++;
     }
-
 
 }

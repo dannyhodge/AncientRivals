@@ -1,7 +1,10 @@
-﻿
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using System;
+using Photon.Pun;
 
-public class javelinMove : MonoBehaviour
+public class javelinMoveArchived : MonoBehaviour
 {
     public bool hitGround = false;
     public float rotateSpeed = 0.05f;
@@ -9,10 +12,12 @@ public class javelinMove : MonoBehaviour
     public float pushBackSpeed = 500f;
     public bool isStraightVertical = false;
     public gameState GS;
+    PhotonView PV;
     public GameObject playerHit;
 
     void Awake() {
         GS = GameObject.Find("_GameManager").GetComponent<gameState>();
+        PV = GetComponent<PhotonView>();
     }
 
     void FixedUpdate()
@@ -43,6 +48,8 @@ public class javelinMove : MonoBehaviour
             Debug.Log("Player hit: ");
             Debug.Log(coll.transform.gameObject.name);
             playerHit = coll.transform.gameObject;
+            
+            PV.RPC("PlayerDead", RpcTarget.All);
 
             coll.transform.gameObject.GetComponent<Rigidbody2D>().AddForce(GetComponent<Rigidbody2D>().velocity.normalized * pushBackSpeed);
 
@@ -54,5 +61,14 @@ public class javelinMove : MonoBehaviour
         }
 	}
 
-
+    [PunRPC]
+    public void PlayerDead() {
+        Debug.Log("Player dead: ");
+        Debug.Log(playerHit.name);
+        GS.ReducePlayersAlive();
+        playerHit.GetComponent<BoxCollider2D>().isTrigger = true;
+        playerHit.GetComponent<Rigidbody2D>().simulated = false;
+        playerHit.GetComponent<moveChar>().enabled = false;
+        playerHit.GetComponent<javelinThrow>().enabled = false;
+    }
 }
